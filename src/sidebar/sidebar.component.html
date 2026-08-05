@@ -1,0 +1,34 @@
+<aside class="sidebar">
+
+  <div class="sidebar-logo">
+
+    <div class="logo-icon">
+      S
+    </div>
+
+    <span class="logo-text">
+      Agendamentos
+    </span>
+
+  </div>
+
+  <nav class="sidebar-nav">
+
+    <a
+      *ngFor="let item of navigationItems"
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+      class="nav-item">
+
+      <i [class]="item.icon"></i>
+
+      <span>
+        {{ item.label }}
+      </span>
+
+    </a>
+
+  </nav>
+
+</aside>

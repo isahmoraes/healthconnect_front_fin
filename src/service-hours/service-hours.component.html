@@ -1,0 +1,200 @@
+<div class="service-hours-container">
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Service Hours</h1>
+
+            <p>
+                Manage doctors' available service hours.
+            </p>
+
+        </div>
+
+        <button
+            class="new-button"
+            (click)="openModal()">
+
+            + New Service Hour
+
+        </button>
+
+    </div>
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Doctor</th>
+
+                    <th>Week Day</th>
+
+                    <th>Start Time</th>
+
+                    <th>End Time</th>
+
+                    <th class="actions-column">
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr *ngFor="let serviceHour of serviceHours">
+
+                    <td>{{ serviceHour.doctor?.name }}</td>
+
+                    <td>{{ serviceHour.dayOfWeek }}</td>
+
+                    <td>{{ serviceHour.startTime }}</td>
+
+                    <td>{{ serviceHour.endTime }}</td>
+
+                    <td class="actions-column">
+
+                        <button
+                            class="edit-button"
+                            (click)="editServiceHour(serviceHour)">
+
+                            Edit
+
+                        </button>
+
+                        <button
+                            class="delete-button"
+                            (click)="deleteServiceHour(serviceHour.id)">
+
+                            Delete
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                <tr *ngIf="serviceHours.length === 0">
+
+                    <td
+                        colspan="5"
+                        class="empty-message">
+
+                        No service hours found.
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- Modal -->
+
+<div
+    class="modal-background"
+    *ngIf="isModalOpen()">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <h2>New Service Hour</h2>
+
+            <button
+                type="button"
+                (click)="closeModal()">
+
+                ✕
+
+            </button>
+
+        </div>
+
+        <form (ngSubmit)="saveServiceHour()">
+
+            <label>Doctor</label>
+
+            <select
+                [(ngModel)]="newServiceHour.doctorId"
+                name="doctorId"
+                required>
+
+                <option value="">
+                    Select a doctor
+                </option>
+
+                        <option
+            *ngFor="let doctor of doctorService.doctors()"
+            [value]="doctor.id">
+
+            {{ doctor.name }}
+
+        </option>
+            </select>
+
+            <label>Week Day</label>
+
+            <select
+                [(ngModel)]="newServiceHour.dayOfWeek"
+                name="dayOfWeek"
+                required>
+
+                <option value="">Select</option>
+
+                <option value="MONDAY">Monday</option>
+                <option value="TUESDAY">Tuesday</option>
+                <option value="WEDNESDAY">Wednesday</option>
+                <option value="THURSDAY">Thursday</option>
+                <option value="FRIDAY">Friday</option>
+                <option value="SATURDAY">Saturday</option>
+                <option value="SUNDAY">Sunday</option>
+
+            </select>
+
+            <label>Start Time</label>
+
+           <input [(ngModel)]="newServiceHour.startTime">
+
+            <label>End Time</label>
+
+            <input
+                type="time"
+                [(ngModel)]="newServiceHour.endTime"
+                name="endTime"
+                required>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    (click)="closeModal()">
+
+                    Cancel
+
+                </button>
+
+                <button type="submit">
+
+                    Save
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

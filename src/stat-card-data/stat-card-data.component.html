@@ -1,0 +1,26 @@
+<div class="stat-card">
+
+  <div class="card-header">
+
+    <h3 class="card-title">
+      {{ title }}
+    </h3>
+
+    <div class="card-icon">
+      <i [class]="iconClass"></i>
+    </div>
+
+  </div>
+
+  <div class="card-value">
+    {{ value }}
+  </div>
+
+  <p
+    *ngIf="description"
+    class="card-description"
+  >
+    {{ description }}
+  </p>
+
+</div>

@@ -1,0 +1,148 @@
+.specialties-container {
+    padding: 30px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+.page-header p {
+    margin-top: 5px;
+    color: #6b7280;
+}
+
+.primary-button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.primary-button:hover {
+    background: #1d4ed8;
+}
+
+.secondary-button {
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 12px 18px;
+    cursor: pointer;
+}
+
+.form-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 30px;
+}
+
+.form-card h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.specialties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.specialty-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.specialty-card p {
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.delete-button {
+    background: none;
+    border: none;
+    color: #dc2626;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.delete-button:hover {
+    text-decoration: underline;
+}
+
+.empty-card {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    color: #6b7280;
+    background: white;
+}
+
+@media (max-width: 768px) {
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .specialties-grid {
+        grid-template-columns: 1fr;
+    }
+
+}

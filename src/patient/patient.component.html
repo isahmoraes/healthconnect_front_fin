@@ -1,0 +1,179 @@
+
+<div class="patients-container">
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Patients</h1>
+
+            <p>
+                Register and manage clinic patients.
+            </p>
+
+        </div>
+
+        <button
+            class="primary-button"
+            (click)="toggleForm()">
+
+            {{ showForm() ? 'Close Form' : '+ New Patient' }}
+
+        </button>
+
+    </div>
+
+    <div
+        class="form-card"
+        *ngIf="showForm()">
+
+        <h2>Register Patient</h2>
+
+        <form (ngSubmit)="savePatient()">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>Full Name</label>
+
+                    <input
+                        type="text"
+                        [(ngModel)]="newPatient.name"
+                        name="name"
+                        required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>CPF</label>
+
+                    <input
+                        type="text"
+                        [(ngModel)]="newPatient.cpf"
+                        name="cpf"
+                        required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Phone</label>
+
+                    <input
+                        type="text"
+                        [(ngModel)]="newPatient.phone"
+                        name="phone"
+                        required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Email</label>
+
+                    <input
+                        type="email"
+                        [(ngModel)]="newPatient.email"
+                        name="email">
+
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    (click)="toggleForm()">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="primary-button">
+
+                    Save Patient
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="table-card">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Name</th>
+
+                    <th>CPF</th>
+
+                    <th>Phone</th>
+
+                    <th>Email</th>
+
+                    <th class="actions-column">
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr
+                    *ngFor="let patient of patientService.patients()">
+
+                    <td>{{ patient.name }}</td>
+
+                    <td>{{ patient.cpf }}</td>
+
+                    <td>{{ patient.phone }}</td>
+
+                    <td>{{ patient.email || 'N/A' }}</td>
+
+                    <td>
+                        <button
+                            class="edit-button"
+                            (click)="editPatient(patient)">
+
+                            Edit
+
+                        </button>
+
+                       
+                    </td>
+
+                </tr>
+
+                <tr *ngIf="patientService.patients().length === 0">
+
+                    <td
+                        colspan="5"
+                        class="empty-message">
+
+                        No patients found.
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

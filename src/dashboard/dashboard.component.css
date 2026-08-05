@@ -1,0 +1,93 @@
+.dashboard-container {
+    padding: 32px;
+}
+
+.page-header {
+    margin-bottom: 32px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+.page-header p {
+    margin-top: 8px;
+    color: #6b7280;
+}
+
+.stats-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    margin-bottom: 32px;
+}
+
+.table-container {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.table-container h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f3f4f6;
+}
+
+th,
+td {
+    padding: 14px;
+    text-align: left;
+}
+
+tbody tr {
+    border-top: 1px solid #e5e7eb;
+}
+
+tbody tr:hover {
+    background: #f9fafb;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-confirmed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.status-default {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.empty-message {
+    text-align: center;
+    color: #6b7280;
+    padding: 32px;
+}

@@ -1,0 +1,173 @@
+<div class="page">
+
+    <div class="header">
+
+        <div>
+            <h1>Appointments</h1>
+            <p>Manage appointments and schedules.</p>
+        </div>
+
+        <button (click)="openModal()">
+            New Appointment
+        </button>
+
+    </div>
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th class="actions">Actions</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr *ngFor="let appointment of appointmentService.appointments()">
+
+                    <td>
+                        {{ appointment.patient?.name || getPatientName(appointment.patientId) }}
+                    </td>
+
+                    <td>
+                        {{ appointment.doctor?.name || getDoctorName(appointment.doctorId) }}
+                    </td>
+
+                    <td>
+                        {{ appointment.dateTime | date:'dd/MM/yyyy HH:mm' }}
+                    </td>
+
+                    <td>
+                        <span
+                            class="status"
+                            [ngClass]="getStatusClass(appointment.status)">
+                            {{ appointment.status }}
+                        </span>
+                    </td>
+
+                    <td class="actions">
+
+                        <button
+                            *ngIf="appointment.status !== 'CANCELADO'"
+                            (click)="cancelAppointment(appointment.id)">
+                            Cancel
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                <tr *ngIf="appointmentService.appointments().length === 0">
+
+                    <td colspan="5" class="empty">
+
+                        No appointments found.
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<div
+    class="modal-background"
+    *ngIf="isModalOpen()">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <h2>New Appointment</h2>
+
+            <button (click)="closeModal()">X</button>
+
+        </div>
+
+        <form (ngSubmit)="saveAppointment()">
+
+            <label>Patient</label>
+
+            <select
+                [(ngModel)]="newAppointment.patientId"
+                name="patientId"
+                required>
+
+                <option value="">Select patient</option>
+
+                <option
+                    *ngFor="let patient of patientService.patients()"
+                    [value]="patient.id">
+
+                    {{ patient.name }}
+
+                </option>
+
+            </select>
+
+            <label>Doctor</label>
+
+            <select
+                [(ngModel)]="newAppointment.doctorId"
+                name="doctorId"
+                required>
+
+                <option value="">Select doctor</option>
+
+                <option
+                    *ngFor="let doctor of doctorService.doctors()"
+                    [value]="doctor.id">
+
+                    {{ doctor.name }}
+
+                </option>
+
+            </select>
+
+            <label>Date and Time</label>
+
+            <input
+                type="datetime-local"
+                [(ngModel)]="newAppointment.dateTime"
+                name="dateTime">
+
+            <label>Notes</label>
+
+            <textarea
+                rows="3"
+                [(ngModel)]="newAppointment.observations"
+                name="observations">
+            </textarea>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    (click)="closeModal()">
+                    Cancel
+                </button>
+
+                <button type="submit">
+                    Save
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

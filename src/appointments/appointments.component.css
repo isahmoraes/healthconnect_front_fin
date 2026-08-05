@@ -1,0 +1,134 @@
+.page {
+    padding: 30px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.header p {
+    color: #666;
+    margin-top: 5px;
+}
+
+button {
+    cursor: pointer;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    background: #1976d2;
+    color: white;
+}
+
+button:hover {
+    background: #1565c0;
+}
+
+.table-container {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f5f5f5;
+}
+
+th,
+td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.actions {
+    text-align: right;
+}
+
+.empty {
+    text-align: center;
+    padding: 40px;
+    color: #777;
+}
+
+.status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.confirmed {
+    background: #d4edda;
+    color: #1b5e20;
+}
+
+.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.modal-background {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    width: 500px;
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 15px;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+input,
+select,
+textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}

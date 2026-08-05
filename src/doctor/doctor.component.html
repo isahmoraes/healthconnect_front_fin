@@ -1,0 +1,174 @@
+<div class="doctors-container">
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Doctors</h1>
+
+            <p>
+                Manage the clinic's medical staff.
+            </p>
+
+        </div>
+
+        <button
+            class="primary-button"
+            (click)="toggleForm()">
+
+            {{ showForm() ? 'Close Form' : '+ New Doctor' }}
+
+        </button>
+
+    </div>
+
+    <div
+        class="form-card"
+        *ngIf="showForm()">
+
+        <h2>Register Doctor</h2>
+
+        <form (ngSubmit)="saveDoctor()">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>Full Name</label>
+
+                    <input
+                        type="text"
+                        [(ngModel)]="newDoctor.name"
+                        name="name"
+                        required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>CRM</label>
+
+                    <input
+                        type="text"
+                        [(ngModel)]="newDoctor.crm"
+                        name="crm"
+                        required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Specialty</label>
+
+                    <select
+                        [(ngModel)]="newDoctor.specialtyId"
+                        name="specialtyId">
+
+                        <option value="">
+                            Select a specialty
+                        </option>
+
+                        <option
+                            *ngFor="let specialty of specialtyService.specialties()"
+                            [value]="specialty.id">
+
+                            {{ specialty.name }}
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Email</label>
+
+                    <input
+                        type="email"
+                        [(ngModel)]="newDoctor.email"
+                        name="email">
+
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    (click)="toggleForm()">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="primary-button">
+
+                    Save Doctor
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="table-card">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Name</th>
+
+                    <th>CRM</th>
+
+                    <th>Specialty</th>
+
+                    <th>Contact</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr
+                    *ngFor="let doctor of doctorService.doctors()">
+
+                    <td>Dr. {{ doctor.name }}</td>
+
+                    <td>{{ doctor.crm }}</td>
+
+                    <td>{{ doctor.specialty?.name || 'N/A' }}</td>
+
+                    <td>{{ doctor.email || doctor.phone || 'No contact' }}</td>
+
+                </tr>
+
+                <tr *ngIf="doctorService.doctors().length === 0">
+
+                    <td
+                        colspan="4"
+                        class="empty-message">
+
+                        No doctors found.
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
