@@ -47,6 +47,11 @@ export class SidebarComponent {
       label: 'Horários',
       icon: 'lucide-clock',
       route: '/schedules'
+    },
+    {
+      label: 'Agenda ',
+      icon: 'lucide-calendar-days',
+      route: '/agenda'
     }
   ];
 

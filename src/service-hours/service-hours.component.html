@@ -4,10 +4,10 @@
 
         <div>
 
-            <h1>Service Hours</h1>
+            <h1>Horários de atendimento</h1>
 
             <p>
-                Manage doctors' available service hours.
+                Gerencie os horários disponíveis dos médicos.
             </p>
 
         </div>
@@ -16,86 +16,68 @@
             class="new-button"
             (click)="openModal()">
 
-            + New Service Hour
+            + Novo horário
 
         </button>
 
     </div>
 
-    <div class="table-container">
+    <div class="schedule-overview">
+        <article class="overview-item overview-routine">
+            <span class="overview-icon">◷</span>
+            <div>
+                <strong>Rotina semanal</strong>
+                <small>Defina os dias normais de atendimento.</small>
+            </div>
+        </article>
 
+        <article class="overview-item overview-exception">
+            <span class="overview-icon">!</span>
+            <div>
+                <strong>Exceções</strong>
+                <small>Registre férias, viagens e ausências.</small>
+            </div>
+        </article>
+
+        <article class="overview-item overview-break">
+            <span class="overview-icon">◴</span>
+            <div>
+                <strong>Intervalos</strong>
+                <small>Configure almoço e pausas do médico.</small>
+            </div>
+        </article>
+    </div>
+
+    <div class="table-container configuration-table">
+        <h2>Horários configurados</h2>
         <table>
-
             <thead>
-
                 <tr>
-
-                    <th>Doctor</th>
-
-                    <th>Week Day</th>
-
-                    <th>Start Time</th>
-
-                    <th>End Time</th>
-
-                    <th class="actions-column">
-                        Actions
-                    </th>
-
+                    <th>Médico</th>
+                    <th>Periodicidade</th>
+                    <th>Tipo</th>
+                    <th>Regra</th>
+                    <th>Horário</th>
+                    <th class="actions-column">Ações</th>
                 </tr>
-
             </thead>
-
             <tbody>
-
                 <tr *ngFor="let serviceHour of serviceHours">
-
-                    <td>{{ serviceHour.doctor?.name }}</td>
-
-                    <td>{{ serviceHour.dayOfWeek }}</td>
-
-                    <td>{{ serviceHour.startTime }}</td>
-
-                    <td>{{ serviceHour.endTime }}</td>
-
+                    <td>{{ getDoctorName(serviceHour) }}</td>
+                    <td>{{ getScheduleModeLabel(serviceHour.scheduleMode) }}</td>
+                    <td>{{ getAvailabilityLabel(serviceHour.availabilityType) }}</td>
+                    <td>{{ serviceHour.scheduleMode === 'SPECIFIC' ? (serviceHour.date | date:'dd/MM/yyyy') : serviceHour.scheduleMode === 'SINGLE_DAY' ? getWeekDayName(serviceHour.dayOfWeek) : getWorkingDaysLabel(serviceHour.workingDays) }}</td>
+                    <td>{{ serviceHour.startTime }} - {{ serviceHour.endTime }}</td>
                     <td class="actions-column">
-
-                        <button
-                            class="edit-button"
-                            (click)="editServiceHour(serviceHour)">
-
-                            Edit
-
-                        </button>
-
-                        <button
-                            class="delete-button"
-                            (click)="deleteServiceHour(serviceHour.id)">
-
-                            Delete
-
-                        </button>
-
+                        <button class="edit-button" (click)="editServiceHour(serviceHour)">Editar</button>
+                        <button class="delete-button" (click)="deleteServiceHour(serviceHour.id)">Excluir</button>
                     </td>
-
                 </tr>
-
                 <tr *ngIf="serviceHours.length === 0">
-
-                    <td
-                        colspan="5"
-                        class="empty-message">
-
-                        No service hours found.
-
-                    </td>
-
+                    <td colspan="6" class="empty-message">Nenhuma configuração encontrada.</td>
                 </tr>
-
             </tbody>
-
         </table>
-
     </div>
 
 </div>
@@ -110,7 +92,7 @@
 
         <div class="modal-header">
 
-            <h2>New Service Hour</h2>
+            <h2>{{ editingServiceHourId === null ? 'Novo horário de atendimento' : 'Editar horário de atendimento' }}</h2>
 
             <button
                 type="button"
@@ -124,50 +106,88 @@
 
         <form (ngSubmit)="saveServiceHour()">
 
-            <label>Doctor</label>
+            <label>Médico</label>
 
-            <select
-                [(ngModel)]="newServiceHour.doctorId"
-                name="doctorId"
+            <button type="button" class="schedule-filter-trigger" [class.open]="activeFilter === 'doctor'" (click)="toggleFilter('doctor')">
+                <span>{{ getSelectedDoctorLabel() }}</span><span class="schedule-filter-chevron">⌄</span>
+            </button>
+
+            <div class="schedule-filter-panel" *ngIf="activeFilter === 'doctor'">
+                <button type="button" class="schedule-filter-option" *ngFor="let doctor of doctorService.doctors()" [class.selected]="newServiceHour.doctorId === doctor.id" (click)="selectDoctor(doctor.id)">
+                    {{ doctor.name }}
+                </button>
+            </div>
+
+            <label>Tipo de disponibilidade</label>
+
+            <button type="button" class="schedule-filter-trigger" [class.open]="activeFilter === 'availability'" (click)="toggleFilter('availability')">
+                <span>{{ getSelectedAvailabilityLabel() }}</span><span class="schedule-filter-chevron">⌄</span>
+            </button>
+
+            <div class="schedule-filter-panel" *ngIf="activeFilter === 'availability'">
+                <button type="button" class="schedule-filter-option" *ngFor="let type of ['ATENDIMENTO', 'AUSENCIA', 'FERIAS', 'VIAGEM', 'INTERVALO', 'ALMOCO']" [class.selected]="newServiceHour.availabilityType === type" (click)="selectAvailability(type)">
+                    {{ getAvailabilityLabel(type) }}
+                </button>
+            </div>
+
+            <label>Configuração</label>
+
+            <button type="button" class="schedule-filter-trigger" [class.open]="activeFilter === 'schedule'" (click)="toggleFilter('schedule')">
+                <span>{{ getSelectedScheduleLabel() }}</span><span class="schedule-filter-chevron">⌄</span>
+            </button>
+
+            <div class="schedule-filter-panel" *ngIf="activeFilter === 'schedule'">
+                <button type="button" class="schedule-filter-option" [class.selected]="newServiceHour.scheduleMode === 'WEEKLY'" (click)="selectSchedule('WEEKLY')">Toda a semana</button>
+                <button type="button" class="schedule-filter-option" [class.selected]="newServiceHour.scheduleMode === 'SINGLE_DAY'" (click)="selectSchedule('SINGLE_DAY')">Apenas um dia da semana</button>
+                <button type="button" class="schedule-filter-option" [class.selected]="newServiceHour.scheduleMode === 'SPECIFIC'" (click)="selectSchedule('SPECIFIC')">Data específica</button>
+            </div>
+
+            <ng-container *ngIf="newServiceHour.scheduleMode === 'WEEKLY'">
+                <label>Dias normais de funcionamento</label>
+
+                <button type="button" class="schedule-filter-trigger" [class.open]="activeFilter === 'workingDays'" (click)="toggleFilter('workingDays')">
+                    <span>{{ getSelectedWorkingDaysLabel() }}</span><span class="schedule-filter-chevron">⌄</span>
+                </button>
+
+                <div class="schedule-filter-panel" *ngIf="activeFilter === 'workingDays'">
+                    <button type="button" class="schedule-filter-option" [class.selected]="newServiceHour.workingDays === 'MONDAY_FRIDAY'" (click)="selectWorkingDays('MONDAY_FRIDAY')">Segunda a sexta</button>
+                    <button type="button" class="schedule-filter-option" [class.selected]="newServiceHour.workingDays === 'MONDAY_SATURDAY'" (click)="selectWorkingDays('MONDAY_SATURDAY')">Segunda a sábado</button>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="newServiceHour.scheduleMode === 'SPECIFIC'">
+                <label>Data da exceção</label>
+
+                <input
+                    type="date"
+                    [(ngModel)]="newServiceHour.date"
+                    name="date"
+                    required>
+            </ng-container>
+
+            <ng-container *ngIf="newServiceHour.scheduleMode === 'SINGLE_DAY'">
+                <label>Dia da semana</label>
+
+                <button type="button" class="schedule-filter-trigger" [class.open]="activeFilter === 'weekday'" (click)="toggleFilter('weekday')">
+                    <span>{{ getSelectedWeekdayLabel() }}</span><span class="schedule-filter-chevron">⌄</span>
+                </button>
+
+                <div class="schedule-filter-panel" *ngIf="activeFilter === 'weekday'">
+                    <button type="button" class="schedule-filter-option" *ngFor="let day of ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']" [class.selected]="newServiceHour.dayOfWeek === day" (click)="selectWeekday(day)">
+                        {{ getWeekDayName(day) }}
+                    </button>
+                </div>
+            </ng-container>
+
+            <label>Hora inicial</label>
+
+            <input
+                type="time"
+                [(ngModel)]="newServiceHour.startTime"
+                name="startTime"
                 required>
 
-                <option value="">
-                    Select a doctor
-                </option>
-
-                        <option
-            *ngFor="let doctor of doctorService.doctors()"
-            [value]="doctor.id">
-
-            {{ doctor.name }}
-
-        </option>
-            </select>
-
-            <label>Week Day</label>
-
-            <select
-                [(ngModel)]="newServiceHour.dayOfWeek"
-                name="dayOfWeek"
-                required>
-
-                <option value="">Select</option>
-
-                <option value="MONDAY">Monday</option>
-                <option value="TUESDAY">Tuesday</option>
-                <option value="WEDNESDAY">Wednesday</option>
-                <option value="THURSDAY">Thursday</option>
-                <option value="FRIDAY">Friday</option>
-                <option value="SATURDAY">Saturday</option>
-                <option value="SUNDAY">Sunday</option>
-
-            </select>
-
-            <label>Start Time</label>
-
-           <input [(ngModel)]="newServiceHour.startTime">
-
-            <label>End Time</label>
+            <label>Hora final</label>
 
             <input
                 type="time"
@@ -181,13 +201,13 @@
                     type="button"
                     (click)="closeModal()">
 
-                    Cancel
+                    Cancelar
 
                 </button>
 
                 <button type="submit">
 
-                    Save
+                    {{ editingServiceHourId === null ? 'Salvar' : 'Atualizar' }}
 
                 </button>
 

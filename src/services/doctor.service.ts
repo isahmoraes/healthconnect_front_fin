@@ -18,10 +18,10 @@ export class DoctorService {
 
   doctors = signal<Doctor[]>([
     {
-      id: 'doc-1',
+      id: 1,
       name: 'Carlos Eduardo',
       crm: '123456/SP',
-      specialtyId: 'spec-1',
+      specialtyId: 1,
       email: 'carlos.eduardo@clinic.com'
     }
   ]);
@@ -44,17 +44,37 @@ export class DoctorService {
 
   }
 
+  getById(id: number): Observable<Doctor | null> {
+
+    return this.http.get<Doctor>(`${this.api}/find_by_id/${id}`).pipe(
+
+      tap((doctor) => {
+        if (doctor) {
+          this.doctors.update(list =>
+            list.some(item => item.id === id)
+              ? list.map(item => item.id === id ? doctor : item)
+              : [...list, doctor]
+          );
+        }
+      }),
+
+      catchError(() => of(this.doctors().find(doctor => doctor.id === id) ?? null))
+
+    );
+
+  }
+
   create(doctor: Partial<Doctor>): Observable<Doctor> {
 
     const newDoctor: Doctor = {
 
-      id: Date.now().toString(),
+      id: Date.now(),
 
       name: doctor.name || '',
 
       crm: doctor.crm || '',
 
-      specialtyId: doctor.specialtyId || '',
+      specialtyId: doctor.specialtyId ?? 0,
 
       email: doctor.email || '',
 
@@ -76,6 +96,20 @@ export class DoctorService {
 
         return of(newDoctor);
 
+      })
+
+    );
+
+  }
+
+  update(id: number, doctor: Partial<Doctor>): Observable<Doctor> {
+
+    return this.http.patch<Doctor>(`${this.api}/update_by_id/${id}`, doctor).pipe(
+
+      tap((updated) => {
+        this.doctors.update(list =>
+          list.map(item => item.id === id ? updated : item)
+        );
       })
 
     );

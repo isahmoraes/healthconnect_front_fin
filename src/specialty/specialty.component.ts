@@ -17,6 +17,7 @@ export class SpecialtyComponent implements OnInit {
   specialtyService = inject(SpecialtyService);
 
   showForm = signal(false);
+  editingSpecialtyId: number | null = null;
 
   newSpecialty: Partial<Specialty> = {
     name: '',
@@ -28,19 +29,25 @@ export class SpecialtyComponent implements OnInit {
   }
 
   toggleForm(): void {
+    this.editingSpecialtyId = null;
     this.showForm.update(value => !value);
   }
 
   saveSpecialty(): void {
 
     if (!this.newSpecialty.name) {
-      alert('Please enter the specialty name.');
+      alert('Digite o nome da especialidade.');
       return;
     }
 
-    this.specialtyService.create(this.newSpecialty).subscribe(() => {
+    const request = this.editingSpecialtyId === null
+      ? this.specialtyService.create(this.newSpecialty)
+      : this.specialtyService.update(this.editingSpecialtyId, this.newSpecialty);
+
+    request.subscribe(() => {
 
       this.showForm.set(false);
+      this.editingSpecialtyId = null;
 
       this.newSpecialty = {
         name: '',
@@ -51,9 +58,15 @@ export class SpecialtyComponent implements OnInit {
 
   }
 
-  removeSpecialty(id: string): void {
+  editSpecialty(specialty: Specialty): void {
+    this.editingSpecialtyId = specialty.id;
+    this.newSpecialty = { ...specialty };
+    this.showForm.set(true);
+  }
 
-    if (confirm('Do you want to delete this specialty?')) {
+  removeSpecialty(id: number): void {
+
+    if (confirm('Deseja excluir esta especialidade?')) {
       this.specialtyService.delete(id).subscribe();
     }
 

@@ -2,3 +2,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+:root {
+	--color-aqua: #14b8a6;
+	--color-aqua-dark: #0d9488;
+	--color-aqua-soft: #f0fdfa;
+	--color-white: #ffffff;
+	--color-border: #d1d5db;
+	--color-danger: #dc2626;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family: 'Nunito', sans-serif;
+	color: #1f2937;
+}
+
+h1,
+h2,
+h3 {
+	font-family: 'Poppins', sans-serif;
+}

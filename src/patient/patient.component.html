@@ -5,10 +5,10 @@
 
         <div>
 
-            <h1>Patients</h1>
+            <h1>Pacientes</h1>
 
             <p>
-                Register and manage clinic patients.
+                Cadastre e gerencie os pacientes da clínica.
             </p>
 
         </div>
@@ -17,7 +17,7 @@
             class="primary-button"
             (click)="toggleForm()">
 
-            {{ showForm() ? 'Close Form' : '+ New Patient' }}
+            {{ showForm() ? 'Fechar formulário' : '+ Novo paciente' }}
 
         </button>
 
@@ -27,7 +27,7 @@
         class="form-card"
         *ngIf="showForm()">
 
-        <h2>Register Patient</h2>
+        <h2>{{ editingPatientId === null ? 'Cadastrar paciente' : 'Editar paciente' }}</h2>
 
         <form (ngSubmit)="savePatient()">
 
@@ -35,7 +35,7 @@
 
                 <div class="form-group">
 
-                    <label>Full Name</label>
+                    <label>Nome completo</label>
 
                     <input
                         type="text"
@@ -59,7 +59,7 @@
 
                 <div class="form-group">
 
-                    <label>Phone</label>
+                    <label>Telefone</label>
 
                     <input
                         type="text"
@@ -89,7 +89,7 @@
                     class="secondary-button"
                     (click)="toggleForm()">
 
-                    Cancel
+                    Cancelar
 
                 </button>
 
@@ -97,7 +97,7 @@
                     type="submit"
                     class="primary-button">
 
-                    Save Patient
+                    {{ editingPatientId === null ? 'Salvar paciente' : 'Atualizar paciente' }}
 
                 </button>
 
@@ -115,16 +115,16 @@
 
                 <tr>
 
-                    <th>Name</th>
+                    <th>Nome</th>
 
                     <th>CPF</th>
 
-                    <th>Phone</th>
+                    <th>Telefone</th>
 
                     <th>Email</th>
 
                     <th class="actions-column">
-                        Actions
+                        Ações
                     </th>
 
                 </tr>
@@ -142,14 +142,14 @@
 
                     <td>{{ patient.phone }}</td>
 
-                    <td>{{ patient.email || 'N/A' }}</td>
+                    <td>{{ patient.email || 'Não informado' }}</td>
 
                     <td>
                         <button
                             class="edit-button"
                             (click)="editPatient(patient)">
 
-                            Edit
+                            Editar
 
                         </button>
 
@@ -164,7 +164,7 @@
                         colspan="5"
                         class="empty-message">
 
-                        No patients found.
+                        Nenhum paciente encontrado.
 
                     </td>
 

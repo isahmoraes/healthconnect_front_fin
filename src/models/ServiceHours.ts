@@ -2,12 +2,16 @@ import { Doctor } from "./Doctor";
 import { Specialty } from "./Specialty";
 
 export interface ServiceHours {
-  id: string;
-  doctorId: string;
+  id: number;
+  doctorId: number;
   doctor?: Doctor;
-  specialtyId: string;
+  specialtyId: number;
   specialty?: Specialty;
-  dayOfWeek: number; 
+  availabilityType: 'ATENDIMENTO' | 'AUSENCIA' | 'FERIAS' | 'VIAGEM' | 'INTERVALO' | 'ALMOCO';
+  scheduleMode: 'WEEKLY' | 'SINGLE_DAY' | 'SPECIFIC';
+  workingDays?: 'MONDAY_FRIDAY' | 'MONDAY_SATURDAY';
+  date?: string;
+  dayOfWeek: string;
   weekDay: string;
   startTime: string;
   endTime: string;

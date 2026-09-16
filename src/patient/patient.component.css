@@ -20,7 +20,7 @@
 }
 
 .primary-button {
-    background: #2563eb;
+    background: var(--color-aqua);
     color: white;
     border: none;
     padding: 12px 18px;
@@ -30,7 +30,7 @@
 }
 
 .primary-button:hover {
-    background: #1d4ed8;
+    background: var(--color-aqua-dark);
 }
 
 .secondary-button {
@@ -92,7 +92,7 @@ table {
 }
 
 thead {
-    background: #f3f4f6;
+    background: #f0fdfa;
 }
 
 th,
@@ -111,17 +111,17 @@ tbody tr:hover {
 }
 
 .edit-button {
-    background:azure;
-    border: 1px solid #d1d5db;
+    background: var(--color-aqua-soft);
+    border: 1px solid #99f6e4;
     padding: 6px 12px;
     border-radius: 8px;
-    color:burlywood;
+    color: var(--color-aqua-dark);
     cursor: pointer;
     font-weight: 600;
 }
 
 .edit-button:hover {
-    text-decoration: underline;
+    background: #ccfbf1;
 }
 
 .empty-message {

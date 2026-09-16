@@ -28,33 +28,43 @@ export class AppointmentsComponent implements OnInit {
   specialtyService = inject(SpecialtyService);
 
   isModalOpen = signal(false);
+  editingAppointmentId: number | null = null;
 
   newAppointment: Partial<Appointment> = {
-    patientId: '',
-    doctorId: '',
-    dateTime: '',
-    observations: ''
+    patient_id: 0,
+    doctor_id: 0,
+    specialty_id: 0,
+    appointment_date: '',
+    time: '',
+    is_recurrence: false,
+    obs: ''
   };
 
   ngOnInit(): void {
     this.appointmentService.list().subscribe();
     this.doctorService.list().subscribe();
     this.patientService.list().subscribe();
+    this.specialtyService.getAll().subscribe();
   }
 
   openModal(): void {
+    this.editingAppointmentId = null;
     this.isModalOpen.set(true);
   }
 
   closeModal(): void {
 
     this.isModalOpen.set(false);
+    this.editingAppointmentId = null;
 
     this.newAppointment = {
-      patientId: '',
-      doctorId: '',
-      dateTime: '',
-      observations: ''
+      patient_id: 0,
+      doctor_id: 0,
+      specialty_id: 0,
+      appointment_date: '',
+      time: '',
+      is_recurrence: false,
+      obs: ''
     };
 
   }
@@ -62,45 +72,86 @@ export class AppointmentsComponent implements OnInit {
   saveAppointment(): void {
 
     if (
-      !this.newAppointment.patientId ||
-      !this.newAppointment.doctorId ||
-      !this.newAppointment.dateTime
+      !this.newAppointment.patient_id ||
+      !this.newAppointment.doctor_id ||
+      !this.newAppointment.specialty_id ||
+      !this.newAppointment.appointment_date ||
+      !this.newAppointment.time
     ) {
-      alert('Fill in all required fields.');
+      alert('Preencha todos os campos obrigatórios.');
       return;
     }
 
-    this.appointmentService.create(this.newAppointment).subscribe(() => {
+    const request = this.editingAppointmentId === null
+      ? this.appointmentService.create(this.newAppointment)
+      : this.appointmentService.update(this.editingAppointmentId, this.newAppointment);
+
+    request.subscribe(() => {
       this.closeModal();
     });
 
   }
 
-  cancelAppointment(id: string): void {
+  editAppointment(appointment: Appointment): void {
+    this.editingAppointmentId = appointment.id;
+    this.newAppointment = { ...appointment };
+    this.isModalOpen.set(true);
+  }
 
-    if (confirm('Do you really want to cancel this appointment?')) {
+  cancelAppointment(id: number): void {
+
+    if (confirm('Deseja realmente cancelar este agendamento?')) {
 
       this.appointmentService
-        .updateStatus(id, 'CANCELADO')
+        .updateStatus(id, 'cancelled')
         .subscribe();
 
     }
 
   }
 
-  getPatientName(id: string): string {
+  getPatientName(id: number): string {
 
-    return this.patientService
+    const patient = this.patientService
       .patients()
-      .find(p => p.id === id)?.name || 'Patient not found';
+      .find(item => item.id === id);
+
+    if (patient) {
+      return patient.name;
+    }
+
+    this.patientService.getById(id).subscribe();
+    return 'Paciente não encontrado';
 
   }
 
-  getDoctorName(id: string): string {
+  getDoctorName(id: number): string {
 
-    return this.doctorService
+    const doctor = this.doctorService
       .doctors()
-      .find(d => d.id === id)?.name || 'Doctor not found';
+      .find(item => item.id === id);
+
+    if (doctor) {
+      return doctor.name;
+    }
+
+    this.doctorService.getById(id).subscribe();
+    return 'Médico não encontrado';
+
+  }
+
+  getSpecialtyName(id: number): string {
+
+    const specialty = this.specialtyService
+      .specialties()
+      .find(item => item.id === id);
+
+    if (specialty) {
+      return specialty.name;
+    }
+
+    this.specialtyService.getById(id).subscribe();
+    return 'Especialidade não encontrada';
 
   }
 
@@ -108,16 +159,16 @@ export class AppointmentsComponent implements OnInit {
 
   switch (status) {
 
-    case 'CONFIRMADO':
+    case 'confirmed':
       return 'confirmed';
 
-    case 'PENDENTE':
+    case 'pending':
       return 'pending';
 
-    case 'CANCELADO':
+    case 'cancelled':
       return 'cancelled';
 
-    case 'CONCLUIDO':
+    case 'completed':
       return 'completed';
 
     default:
@@ -125,5 +176,27 @@ export class AppointmentsComponent implements OnInit {
   }
 
 }
+
+  getStatusLabel(status: Appointment['status']): string {
+
+    switch (status) {
+
+      case 'confirmed':
+        return 'Confirmado';
+
+      case 'pending':
+        return 'Pendente';
+
+      case 'cancelled':
+        return 'Cancelado';
+
+      case 'completed':
+        return 'Concluído';
+
+      default:
+        return status;
+    }
+
+  }
 
 }

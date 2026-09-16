@@ -16,7 +16,7 @@ export class PatientService {
 
   patients = signal<Patient[]>([
     {
-      id: 'pat-1',
+      id: 1,
       name: 'Ana Maria Silva',
       cpf: '123.456.789-00',
       phone: '(11) 98765-4321',
@@ -43,11 +43,31 @@ export class PatientService {
 
   }
 
+  getById(id: number): Observable<Patient | null> {
+
+    return this.http.get<Patient>(`${this.api}/find_by_id/${id}`).pipe(
+
+      tap((patient) => {
+        if (patient) {
+          this.patients.update(list =>
+            list.some(item => item.id === id)
+              ? list.map(item => item.id === id ? patient : item)
+              : [...list, patient]
+          );
+        }
+      }),
+
+      catchError(() => of(this.patients().find(patient => patient.id === id) ?? null))
+
+    );
+
+  }
+
   create(patient: Partial<Patient>): Observable<Patient> {
 
     const newPatient: Patient = {
 
-      id: Date.now().toString(),
+      id: Date.now(),
 
       name: patient.name || '',
 
@@ -81,7 +101,21 @@ export class PatientService {
 
   }
 
-  delete(id: string): Observable<void | null> {
+  update(id: number, patient: Partial<Patient>): Observable<Patient> {
+
+    return this.http.patch<Patient>(`${this.api}/update_by_id/${id}`, patient).pipe(
+
+      tap((updated) => {
+        this.patients.update(list =>
+          list.map(item => item.id === id ? updated : item)
+        );
+      })
+
+    );
+
+  }
+
+  delete(id: number): Observable<void | null> {
 
     return this.http.delete<void>(`${this.api}/${id}`).pipe(
 

@@ -1,0 +1,136 @@
+<div class="agenda-container">
+
+    <div class="page-header">
+        <div>
+            <h1>Agenda </h1>
+            <p>Visualize as consultas em um calendário mensal.</p>
+        </div>
+
+        <div class="month-actions">
+            <button type="button" (click)="previousMonth()">Mês anterior</button>
+            <button type="button" class="today-button" (click)="currentMonth()">Hoje</button>
+            <button type="button" (click)="nextMonth()">Próximo mês</button>
+        </div>
+    </div>
+
+    <div class="agenda-filters">
+        <label>
+            <span class="filter-label">Médico</span>
+            <button type="button" class="filter-trigger" [class.open]="activeFilter === 'doctor'" (click)="toggleFilter('doctor')">
+                <span>{{ getSelectedDoctorLabel() }}</span><span class="filter-chevron">⌄</span>
+            </button>
+            <div class="filter-panel" *ngIf="activeFilter === 'doctor'">
+                <button type="button" class="filter-option" [class.selected]="selectedDoctorId === 0" (click)="selectDoctor(0)">Todos os médicos</button>
+                <button type="button" class="filter-option" *ngFor="let doctor of doctorService.doctors()" [class.selected]="selectedDoctorId === doctor.id" (click)="selectDoctor(doctor.id)">
+                    {{ doctor.name }}
+                </button>
+            </div>
+        </label>
+
+        <label>
+            <span class="filter-label">Status</span>
+            <button type="button" class="filter-trigger" [class.open]="activeFilter === 'status'" (click)="toggleFilter('status')">
+                <span>{{ getSelectedStatusLabel() }}</span><span class="filter-chevron">⌄</span>
+            </button>
+            <div class="filter-panel" *ngIf="activeFilter === 'status'">
+                <button type="button" class="filter-option" [class.selected]="selectedStatus === ''" (click)="selectStatus('')">Todos os status</button>
+                <button type="button" class="filter-option" *ngFor="let status of ['pending', 'confirmed', 'cancelled', 'completed']" [class.selected]="selectedStatus === status" (click)="selectStatus(status)">
+                    {{ getStatusLabel(status) }}
+                </button>
+            </div>
+        </label>
+
+        <label>
+            <span class="filter-label">Dia da semana</span>
+            <button type="button" class="filter-trigger" [class.open]="activeFilter === 'weekday'" (click)="toggleFilter('weekday')">
+                <span>{{ getSelectedWeekdayLabel() }}</span><span class="filter-chevron">⌄</span>
+            </button>
+            <div class="filter-panel" *ngIf="activeFilter === 'weekday'">
+                <button type="button" class="filter-option" [class.selected]="selectedWeekday === ''" (click)="selectWeekday('')">Todos os dias</button>
+                <button type="button" class="filter-option" *ngFor="let day of ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']" [class.selected]="selectedWeekday === day" (click)="selectWeekday(day)">
+                    {{ getSelectedWeekdayName(day) }}
+                </button>
+            </div>
+        </label>
+    </div>
+
+    <div class="calendar-card">
+        <div class="calendar-title">
+            <div class="calendar-title-content">
+                <span class="calendar-eyebrow">Agenda mensal</span>
+                <h2>{{ getCalendarTitle() }}</h2>
+            </div>
+            <span class="calendar-count">
+                {{ filteredAppointments.length }} consulta(s) filtrada(s)
+            </span>
+        </div>
+
+        <div class="calendar-weekdays">
+            <span>Seg</span>
+            <span>Ter</span>
+            <span>Qua</span>
+            <span>Qui</span>
+            <span>Sex</span>
+            <span>Sáb</span>
+            <span>Dom</span>
+        </div>
+
+        <div class="calendar-grid">
+            <article
+                class="calendar-day"
+                [class.other-month]="!isCurrentMonth(day)"
+                *ngFor="let day of calendarDays"
+                role="button"
+                tabindex="0"
+                (click)="openDay(day)"
+                (keydown.enter)="openDay(day)">
+
+                <strong>{{ day | date:'d' }}</strong>
+
+                <div
+                    class="appointment-card"
+                    *ngFor="let appointment of getAppointmentsForDay(day)"
+                    [ngClass]="getStatusClass(appointment.status)">
+                    <strong>{{ appointment.time }} · {{ getPatientName(appointment.patient_id) }}</strong>
+                    <span>{{ getDoctorName(appointment.doctor_id) }}</span>
+                    <small>{{ getStatusLabel(appointment.status) }}</small>
+                </div>
+
+            </article>
+        </div>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredAppointments.length === 0">
+        Nenhuma consulta encontrada para os filtros selecionados.
+    </div>
+</div>
+
+<div class="day-modal-backdrop" *ngIf="selectedDay" (click)="closeDay()">
+    <section class="day-modal" (click)="$event.stopPropagation()">
+        <header class="day-modal-header">
+            <div>
+                <span>Agenda do dia</span>
+                <h2>{{ getSelectedDayTitle(selectedDay) }}</h2>
+            </div>
+            <button type="button" (click)="closeDay()" aria-label="Fechar">✕</button>
+        </header>
+
+        <div class="day-modal-content" *ngIf="selectedDayAppointments.length > 0">
+            <article
+                class="day-appointment"
+                *ngFor="let appointment of selectedDayAppointments"
+                [ngClass]="getStatusClass(appointment.status)">
+                <strong>{{ appointment.time }}</strong>
+                <div>
+                    <b>{{ getPatientName(appointment.patient_id) }}</b>
+                    <span>{{ getDoctorName(appointment.doctor_id) }}</span>
+                </div>
+                <small>{{ getStatusLabel(appointment.status) }}</small>
+            </article>
+        </div>
+
+        <p class="day-empty" *ngIf="selectedDayAppointments.length === 0">
+            Nenhuma consulta encontrada neste dia para os filtros selecionados.
+        </p>
+    </section>
+</div>

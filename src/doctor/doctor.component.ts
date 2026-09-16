@@ -23,11 +23,12 @@ export class DoctorsComponent implements OnInit {
   specialtyService = inject(SpecialtyService);
 
   showForm = signal(false);
+  editingDoctorId: number | null = null;
 
   newDoctor: Partial<Doctor> = {
     name: '',
     crm: '',
-    specialtyId: '',
+    specialtyId: 0,
     email: ''
   };
 
@@ -41,6 +42,7 @@ export class DoctorsComponent implements OnInit {
 
   toggleForm(): void {
 
+    this.editingDoctorId = null;
     this.showForm.update(value => !value);
 
   }
@@ -49,25 +51,36 @@ export class DoctorsComponent implements OnInit {
 
     if (!this.newDoctor.name || !this.newDoctor.crm) {
 
-      alert('Please fill in all required fields.');
+      alert('Preencha todos os campos obrigatórios.');
 
       return;
 
     }
 
-    this.doctorService.create(this.newDoctor).subscribe(() => {
+    const request = this.editingDoctorId === null
+      ? this.doctorService.create(this.newDoctor)
+      : this.doctorService.update(this.editingDoctorId, this.newDoctor);
+
+    request.subscribe(() => {
 
       this.showForm.set(false);
+      this.editingDoctorId = null;
 
       this.newDoctor = {
         name: '',
         crm: '',
-        specialtyId: '',
+        specialtyId: 0,
         email: ''
       };
 
     });
 
+  }
+
+  editDoctor(doctor: Doctor): void {
+    this.editingDoctorId = doctor.id;
+    this.newDoctor = { ...doctor };
+    this.showForm.set(true);
   }
 
 }

@@ -20,7 +20,7 @@
 }
 
 .primary-button {
-    background: #14b8a6;
+    background: var(--color-aqua);
     color: white;
     border: none;
     padding: 12px 18px;
@@ -30,7 +30,7 @@
 }
 
 .primary-button:hover {
-    background: #0d9488;
+    background: var(--color-aqua-dark);
 }
 
 .secondary-button {
@@ -39,6 +39,21 @@
     padding: 12px 18px;
     border-radius: 8px;
     cursor: pointer;
+}
+
+.edit-button {
+    background: var(--color-aqua-soft);
+    border: 1px solid #99f6e4;
+    padding: 6px 12px;
+    border-radius: 8px;
+    color: var(--color-aqua-dark);
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+.edit-button:hover {
+    background: #ccfbf1;
 }
 
 .table-card {
@@ -128,16 +143,22 @@ tbody tr:hover {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
     z-index: 999;
 }
 
 .modal {
     width: 500px;
     max-width: 95%;
+    max-height: 100%;
     background: white;
     border-radius: 10px;
     padding: 24px;
+    box-sizing: border-box;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
 }
 
 .modal-header {
@@ -246,4 +267,41 @@ form textarea {
         width: 100%;
     }
 
+}
+
+.return-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.return-option input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid #9ca3af;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    position: relative;
+}
+
+.return-option input[type="checkbox"]:checked {
+    background: var(--color-aqua);
+    border-color: var(--color-aqua);
+}
+
+.return-option input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 8px;
+    left: 50%;
+    top: 50%;
+    border: solid #d1d5db;
+    border-width: 0 2px 2px 0;
+    transform: translate(-50%, -60%) rotate(45deg);
 }

@@ -4,10 +4,10 @@
 
         <div>
 
-            <h1>Doctors</h1>
+            <h1>Médicos</h1>
 
             <p>
-                Manage the clinic's medical staff.
+                Gerencie a equipe médica da clínica.
             </p>
 
         </div>
@@ -16,7 +16,7 @@
             class="primary-button"
             (click)="toggleForm()">
 
-            {{ showForm() ? 'Close Form' : '+ New Doctor' }}
+            {{ showForm() ? 'Fechar formulário' : '+ Novo médico' }}
 
         </button>
 
@@ -26,7 +26,7 @@
         class="form-card"
         *ngIf="showForm()">
 
-        <h2>Register Doctor</h2>
+        <h2>{{ editingDoctorId === null ? 'Cadastrar médico' : 'Editar médico' }}</h2>
 
         <form (ngSubmit)="saveDoctor()">
 
@@ -34,7 +34,7 @@
 
                 <div class="form-group">
 
-                    <label>Full Name</label>
+                    <label>Nome completo</label>
 
                     <input
                         type="text"
@@ -58,14 +58,14 @@
 
                 <div class="form-group">
 
-                    <label>Specialty</label>
+                    <label>Especialidade</label>
 
                     <select
                         [(ngModel)]="newDoctor.specialtyId"
                         name="specialtyId">
 
                         <option value="">
-                            Select a specialty
+                            Selecione uma especialidade
                         </option>
 
                         <option
@@ -100,7 +100,7 @@
                     class="secondary-button"
                     (click)="toggleForm()">
 
-                    Cancel
+                    Cancelar
 
                 </button>
 
@@ -108,7 +108,7 @@
                     type="submit"
                     class="primary-button">
 
-                    Save Doctor
+                    Salvar médico
 
                 </button>
 
@@ -126,13 +126,15 @@
 
                 <tr>
 
-                    <th>Name</th>
+                    <th>Nome</th>
 
                     <th>CRM</th>
 
-                    <th>Specialty</th>
+                    <th>Especialidade</th>
 
-                    <th>Contact</th>
+                    <th>Contato</th>
+
+                    <th class="actions-column">Ações</th>
 
                 </tr>
 
@@ -147,19 +149,27 @@
 
                     <td>{{ doctor.crm }}</td>
 
-                    <td>{{ doctor.specialty?.name || 'N/A' }}</td>
+                    <td>{{ doctor.specialty?.name || 'Não informado' }}</td>
 
-                    <td>{{ doctor.email || doctor.phone || 'No contact' }}</td>
+                    <td>{{ doctor.email || doctor.phone || 'Nenhum contato' }}</td>
+
+                    <td class="actions-column">
+                        <button
+                            class="edit-button"
+                            (click)="editDoctor(doctor)">
+                            Editar
+                        </button>
+                    </td>
 
                 </tr>
 
                 <tr *ngIf="doctorService.doctors().length === 0">
 
                     <td
-                        colspan="4"
+                        colspan="5"
                         class="empty-message">
 
-                        No doctors found.
+                        Nenhum médico encontrado.
 
                     </td>
 

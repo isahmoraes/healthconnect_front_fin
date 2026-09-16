@@ -17,6 +17,7 @@ export class PatientsComponent implements OnInit {
   patientService = inject(PatientService);
 
   showForm = signal(false);
+  editingPatientId: number | null = null;
 
   newPatient: Partial<Patient> = {
     name: '',
@@ -33,6 +34,7 @@ export class PatientsComponent implements OnInit {
 
   toggleForm(): void {
 
+    this.editingPatientId = null;
     this.showForm.update(value => !value);
 
   }
@@ -41,15 +43,20 @@ export class PatientsComponent implements OnInit {
 
     if (!this.newPatient.name || !this.newPatient.cpf) {
 
-      alert('Please fill in all required fields.');
+      alert('Preencha todos os campos obrigatórios.');
 
       return;
 
     }
 
-    this.patientService.create(this.newPatient).subscribe(() => {
+    const request = this.editingPatientId === null
+      ? this.patientService.create(this.newPatient)
+      : this.patientService.update(this.editingPatientId, this.newPatient);
+
+    request.subscribe(() => {
 
       this.showForm.set(false);
+      this.editingPatientId = null;
 
       this.newPatient = {
         name: '',
@@ -64,6 +71,7 @@ export class PatientsComponent implements OnInit {
 
   editPatient(patient: Patient): void {
 
+    this.editingPatientId = patient.id;
     this.newPatient = { ...patient };
 
     this.showForm.set(true);

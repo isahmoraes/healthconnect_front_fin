@@ -13,76 +13,51 @@ export class AppointmentService {
 
   private http = inject(HttpClient);
 
-  private api= `${environment.apiUrl}/specialties`;
+  private api= `${environment.apiUrl}/appointments`;
 
-  // State Signals
-  appointments = signal<Appointment[]>([
-    {
-      id: '1',
-      patientId: 'pat-1',
-      doctorId: 'doc-1',
-      specialtyId: 'spec-1',
-      dateTime: new Date().toISOString(),
-      status: 'CONFIRMADO',
-      observations: 'Routine appointment'
-    }
-  ]);
 
+  appointments = signal<Appointment[]>([]);
   loading = signal<boolean>(false);
 
   list(): Observable<Appointment[]> {
 
-    this.loading.set(true);
+    
 
-    return this.http.get<Appointment[]>(this.api).pipe(
-
-      tap({
-        next: (data) => {
-
-          if (data && data.length > 0) {
-            this.appointments.set(data);
-          }
-
-          this.loading.set(false);
-
-        }
-      }),
-
-      catchError((error) => {
-
-        console.warn('Backend unavailable. Keeping local data.', error);
-
-        this.loading.set(false);
-
-        return of(this.appointments());
-
-      })
-
+    return this.http.get<Appointment[]>(`${this.api}/all/`).pipe(
+      tap(data => this.appointments.set(data))
     );
 
+    
   }
+
+ 
 
   create(appointment: Partial<Appointment>): Observable<Appointment> {
 
     const newAppointment: Appointment = {
 
-      id: Date.now().toString(),
+      id: Date.now(),
 
-      patientId: appointment.patientId || '',
+      patient_id: appointment.patient_id ?? 0,
 
-      doctorId: appointment.doctorId || '',
 
-      specialtyId: appointment.specialtyId || '',
+      doctor_id: appointment.doctor_id ?? 0,
 
-      dateTime: appointment.dateTime || new Date().toISOString(),
+      specialty_id: appointment.specialty_id ?? 0,
 
-      status: 'PENDENTE',
+      appointment_date: appointment.appointment_date || new Date().toISOString().slice(0, 10),
 
-      observations: appointment.observations || ''
+      time: appointment.time || '00:00',
+
+      status: 'pending',
+
+      is_recurrence: appointment.is_recurrence ?? false,
+
+      obs: appointment.obs || ''
 
     };
 
-    return this.http.post<Appointment>(this.api, appointment).pipe(
+    return this.http.post<Appointment>(`${this.api}/create`, appointment).pipe(
 
       tap((created) => {
 
@@ -103,13 +78,27 @@ export class AppointmentService {
 
   }
 
+  update(id: number, appointment: Partial<Appointment>): Observable<Appointment> {
+
+    return this.http.patch<Appointment>(`${this.api}/update_by_id/${id}`, appointment).pipe(
+
+      tap((updated) => {
+        this.appointments.update(list =>
+          list.map(item => item.id === id ? updated : item)
+        );
+      })
+
+    );
+
+  }
+
   updateStatus(
-    id: string,
+    id: number,
     status: Appointment['status']
   ): Observable<Appointment | null> {
 
     return this.http.patch<Appointment>(
-      `${this.api}/${id}`,
+      `${this.api}/update_by_id/${id}`,
       { status }
     ).pipe(
 
@@ -143,9 +132,9 @@ export class AppointmentService {
 
   }
 
-  delete(id: string): Observable<void | null> {
+  delete(id: number): Observable<void | null> {
 
-    return this.http.delete<void>(`${this.api}/${id}`).pipe(
+    return this.http.delete<void>(`${this.api}/delete/${id}`).pipe(
 
       tap(() => {
 

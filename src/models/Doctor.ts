@@ -4,7 +4,7 @@ import { Specialty } from "./Specialty";
 export interface Doctor extends Person {
 
   crm: string;
-  specialtyId: string;
+  specialtyId: number;
   specialty?: Specialty;
  
 }

@@ -3,15 +3,15 @@
     <div class="page-header">
 
         <div>
-            <h1>Appointments</h1>
-            <p>Manage appointments and schedules.</p>
+            <h1>Agendamentos</h1>
+            <p>Gerencie consultas e horários.</p>
         </div>
 
         <button
             class="primary-button"
             (click)="openModal()">
 
-            + New Appointment
+            + Novo agendamento
 
         </button>
 
@@ -24,11 +24,12 @@
             <thead>
 
                 <tr>
-                    <th>Patient</th>
-                    <th>Doctor</th>
-                    <th>Date</th>
+                    <th>Paciente</th>
+                    <th>Médico</th>
+                    <th>Especialidade</th>
+                    <th>Data</th>
                     <th>Status</th>
-                    <th class="actions-column">Actions</th>
+                    <th class="actions-column">Ações</th>
                 </tr>
 
             </thead>
@@ -39,15 +40,19 @@
                     *ngFor="let appointment of appointmentService.appointments()">
 
                     <td>
-                        {{ appointment.patient?.name || getPatientName(appointment.patientId) }}
+                        {{ appointment.patient?.name || getPatientName(appointment.patient_id) }}
                     </td>
 
                     <td>
-                        {{ appointment.doctor?.name || getDoctorName(appointment.doctorId) }}
+                        {{ appointment.doctor?.name || getDoctorName(appointment.doctor_id) }}
                     </td>
 
                     <td>
-                        {{ appointment.dateTime | date:'dd/MM/yyyy HH:mm' }}
+                        {{ appointment.specialty?.name || getSpecialtyName(appointment.specialty_id) }}
+                    </td>
+
+                    <td>
+                        {{ appointment.appointment_date | date:'dd/MM/yyyy' }} {{ appointment.time }}
                     </td>
 
                     <td>
@@ -56,7 +61,7 @@
                             class="status"
                             [ngClass]="getStatusClass(appointment.status)">
 
-                            {{ appointment.status }}
+                            {{ getStatusLabel(appointment.status) }}
 
                         </span>
 
@@ -65,11 +70,19 @@
                     <td class="actions-column">
 
                         <button
-                            *ngIf="appointment.status !== 'CANCELADO'"
+                            class="edit-button"
+                            (click)="editAppointment(appointment)">
+
+                            Editar
+
+                        </button>
+
+                        <button
+                            *ngIf="appointment.status !== 'cancelled'"
                             class="cancel-button"
                             (click)="cancelAppointment(appointment.id)">
 
-                            Cancel
+                            Cancelar
 
                         </button>
 
@@ -81,10 +94,10 @@
                     *ngIf="appointmentService.appointments().length === 0">
 
                     <td
-                        colspan="5"
+                        colspan="6"
                         class="empty-message">
 
-                        No appointments found.
+                        Nenhum agendamento encontrado.
 
                     </td>
 
@@ -106,7 +119,7 @@
 
         <div class="modal-header">
 
-            <h2>New Appointment</h2>
+            <h2>{{ editingAppointmentId === null ? 'Novo agendamento' : 'Editar agendamento' }}</h2>
 
             <button
                 type="button"
@@ -120,20 +133,20 @@
 
         <form (ngSubmit)="saveAppointment()">
 
-            <label>Patient</label>
+            <label>Paciente</label>
 
             <select
-                [(ngModel)]="newAppointment.patientId"
-                name="patientId"
+                [(ngModel)]="newAppointment.patient_id"
+                name="patient_id"
                 required>
 
-                <option value="">
-                    Select patient
+                <option [ngValue]="0">
+                    Selecione o paciente
                 </option>
 
                 <option
                     *ngFor="let patient of patientService.patients()"
-                    [value]="patient.id">
+                    [ngValue]="patient.id">
 
                     {{ patient.name }}
 
@@ -141,20 +154,20 @@
 
             </select>
 
-            <label>Doctor</label>
+            <label>Médico</label>
 
             <select
-                [(ngModel)]="newAppointment.doctorId"
-                name="doctorId"
+                [(ngModel)]="newAppointment.doctor_id"
+                name="doctor_id"
                 required>
 
-                <option value="">
-                    Select doctor
+                <option [ngValue]="0">
+                    Selecione o médico
                 </option>
 
                 <option
                     *ngFor="let doctor of doctorService.doctors()"
-                    [value]="doctor.id">
+                    [ngValue]="doctor.id">
 
                     {{ doctor.name }}
 
@@ -162,21 +175,76 @@
 
             </select>
 
-            <label>Date and Time</label>
+            <label>Especialidade</label>
 
-            <input
-                type="datetime-local"
-                [(ngModel)]="newAppointment.dateTime"
-                name="dateTime"
+            <select
+                [(ngModel)]="newAppointment.specialty_id"
+                name="specialty_id"
                 required>
 
-            <label>Notes</label>
+                <option [ngValue]="0">
+                    Selecione a especialidade
+                </option>
+
+                <option
+                    *ngFor="let specialty of specialtyService.specialties()"
+                    [ngValue]="specialty.id">
+
+                    {{ specialty.name }}
+
+                </option>
+
+            </select>
+
+            <label>Data</label>
+
+            <input
+                type="date"
+                [(ngModel)]="newAppointment.appointment_date"
+                name="appointment_date"
+                required>
+
+            <label>Horário</label>
+
+            <input
+                type="time"
+                [(ngModel)]="newAppointment.time"
+                name="time"
+                required>
+
+            <label>Observações</label>
 
             <textarea
                 rows="3"
-                [(ngModel)]="newAppointment.observations"
-                name="observations">
+                [(ngModel)]="newAppointment.obs"
+                name="obs">
             </textarea>
+
+            <ng-container *ngIf="editingAppointmentId !== null">
+
+                <label>Status</label>
+
+                <select
+                    [(ngModel)]="newAppointment.status"
+                    name="status"
+                    required>
+
+                    <option value="pending">Pendente</option>
+                    <option value="confirmed">Confirmado</option>
+                    <option value="cancelled">Cancelado</option>
+                    <option value="completed">Concluído</option>
+
+                </select>
+
+            </ng-container>
+
+            <label class="return-option">
+                <input
+                    type="checkbox"
+                    [(ngModel)]="newAppointment.is_recurrence"
+                    name="is_recurrence">
+                Retorno
+            </label>
 
             <div class="modal-footer">
 
@@ -184,13 +252,13 @@
                     type="button"
                     (click)="closeModal()">
 
-                    Cancel
+                    Cancelar
 
                 </button>
 
                 <button type="submit">
 
-                    Save
+                    {{ editingAppointmentId === null ? 'Salvar' : 'Atualizar' }}
 
                 </button>
 
