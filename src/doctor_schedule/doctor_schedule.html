@@ -1,0 +1,75 @@
+<div class="doctor-schedule-container">
+    <div class="page-header">
+        <div>
+            <h1>Horários de atendimento</h1>
+            <p>Configure os horários de atendimento dos médicos.</p>
+        </div>
+        <button class="new-button" (click)="openModal()">+ Novo horário</button>
+    </div>
+
+    <div class="table-container configuration-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Médico</th>
+                    <th>Dia da semana</th>
+                    <th>Início</th>
+                    <th>Fim</th>
+                    <th class="actions-column"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let doctorSchedule of doctorSchedules">
+                    <td>{{ getDoctorName(doctorSchedule) }}</td>
+                    <td>{{ getWeekDayName(doctorSchedule.day_of_week) }}</td>
+                    <td>{{ doctorSchedule.start_time }}</td>
+                    <td>{{ doctorSchedule.end_time }}</td>
+                    <td class="actions-column">
+                        <button class="edit-button" (click)="editDoctorSchedule(doctorSchedule)">Editar</button>
+                        <button class="delete-button" (click)="deleteDoctorSchedule(doctorSchedule.id)">Excluir</button>
+                    </td>
+                </tr>
+                <tr *ngIf="doctorSchedules.length === 0">
+                    <td colspan="5" class="empty-message">Nenhuma configuração encontrada.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal-background" *ngIf="isModalOpen()">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>{{ editingDoctorScheduleId === null ? 'Novo horário' : 'Editar horário' }}</h2>
+            <button type="button" (click)="closeModal()">✕</button>
+        </div>
+
+        <form (ngSubmit)="saveDoctorSchedule()">
+            <label>Médico</label>
+            <button type="button" class="schedule-filter-trigger" [class.open]="activeFilter === 'doctor'" (click)="toggleFilter('doctor')">
+                <span>{{ getSelectedDoctorLabel() }}</span><span class="schedule-filter-chevron">⌄</span>
+            </button>
+            <div class="schedule-filter-panel" *ngIf="activeFilter === 'doctor'">
+                <button type="button" class="schedule-filter-option" *ngFor="let doctor of doctorService.doctors()" [class.selected]="newDoctorSchedule.doctor_id === doctor.id" (click)="selectDoctor(doctor.id)">{{ doctor.name }}</button>
+            </div>
+
+            <label>Dia da semana</label>
+            <button type="button" class="schedule-filter-trigger" [class.open]="activeFilter === 'weekday'" (click)="toggleFilter('weekday')">
+                <span>{{ getSelectedWeekdayLabel() }}</span><span class="schedule-filter-chevron">⌄</span>
+            </button>
+            <div class="schedule-filter-panel" *ngIf="activeFilter === 'weekday'">
+                <button type="button" class="schedule-filter-option" *ngFor="let day of ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']" [class.selected]="newDoctorSchedule.day_of_week === day" (click)="selectWeekday(day)">{{ getWeekDayName(day) }}</button>
+            </div>
+
+            <label for="start-time">Hora inicial</label>
+            <input id="start-time" type="time" [(ngModel)]="newDoctorSchedule.start_time" name="start_time" required>
+            <label for="end-time">Hora final</label>
+            <input id="end-time" type="time" [(ngModel)]="newDoctorSchedule.end_time" name="end_time" required>
+
+            <div class="modal-footer">
+                <button type="button" (click)="closeModal()">Cancelar</button>
+                <button type="submit">{{ editingDoctorScheduleId === null ? 'Salvar' : 'Atualizar' }}</button>
+            </div>
+        </form>
+    </div>
+</div>

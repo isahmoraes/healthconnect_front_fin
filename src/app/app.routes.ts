@@ -34,8 +34,8 @@ export const routes: Routes = [
   {
     path: 'schedules',
     loadComponent: () =>
-      import('../service-hours/service-hours.component')
-        .then(m => m.ServiceHoursComponent)
+      import('../doctor_schedule/doctor_schedule.component')
+        .then(m => m.DoctorScheduleComponent)
   },
   {
     path: 'agenda',
