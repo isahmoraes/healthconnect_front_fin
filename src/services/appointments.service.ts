@@ -80,7 +80,7 @@ export class AppointmentService {
 
   update(id: number, appointment: Partial<Appointment>): Observable<Appointment> {
 
-    return this.http.patch<Appointment>(`${this.api}/update_by_id/${id}`, appointment).pipe(
+    return this.http.put<Appointment>(`${this.api}/update_by_id/${id}`, appointment).pipe(
 
       tap((updated) => {
         this.appointments.update(list =>
