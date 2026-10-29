@@ -21,7 +21,7 @@ export class SidebarComponent {
     {
       label: 'Painel Principal',
       icon: 'lucide-layout-dashboard',
-      route: '/'
+      route: '/dashboard'
     },
     {
       label: 'Agendamentos',
@@ -52,7 +52,12 @@ export class SidebarComponent {
       label: 'Agenda ',
       icon: 'lucide-calendar-days',
       route: '/agenda'
-    }
+    },
+    {
+      label: 'Sair',
+      icon: 'lucide-log-out',
+      route: '/login'
+    },
   ];
 
 }

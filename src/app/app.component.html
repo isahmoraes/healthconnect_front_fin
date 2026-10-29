@@ -1,9 +1,25 @@
-<div class="layout">
+@if (!isLoginPage) {
+  <div class="layout">
+    <div class="sidebar-wrapper" [class.sidebar-collapsed]="sidebarCollapsed">
+      <app-sidebar></app-sidebar>
+    </div>
 
-    <app-sidebar></app-sidebar>
+    <div class="main-panel">
+      <header class="toolbar">
+        <button type="button" class="toggle-sidebar" (click)="toggleSidebar()" aria-label="Alternar menu lateral">
+          ☰
+        </button>
 
-    <main class="content">
+        <div class="toolbar-title">HealthConnect</div>
+
+        <div class="toolbar-actions"></div>
+      </header>
+
+      <main class="content">
         <router-outlet></router-outlet>
-    </main>
-
-</div>
+      </main>
+    </div>
+  </div>
+} @else {
+  <router-outlet></router-outlet>
+}
