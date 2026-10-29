@@ -61,7 +61,7 @@ export class DoctorScheduleService {
   }
 
   update(id: number, doctorSchedule: Partial<DoctorSchedule>): Observable<DoctorSchedule> {
-    return this.http.patch<DoctorSchedule>(`${this.api}/update_by_id/${id}`, doctorSchedule).pipe(
+    return this.http.put<DoctorSchedule>(`${this.api}/update_by_id/${id}`, doctorSchedule).pipe(
       tap((updated) => {
         this.doctorSchedules.update(list =>
           list.map(item => item.id === id ? updated : item)

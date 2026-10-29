@@ -56,7 +56,7 @@ export class SpecialtyService {
 
   update(id: number, specialty: Partial<Specialty>): Observable<Specialty> {
 
-    return this.http.patch<Specialty>(`${this.api}/update_by_id/${id}`, specialty).pipe(
+    return this.http.put<Specialty>(`${this.api}/update_by_id/${id}`, specialty).pipe(
 
       tap((updated) => {
         this.specialties.update(list =>

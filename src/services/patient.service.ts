@@ -103,7 +103,7 @@ export class PatientService {
 
   update(id: number, patient: Partial<Patient>): Observable<Patient> {
 
-    return this.http.patch<Patient>(`${this.api}/update_by_id/${id}`, patient).pipe(
+    return this.http.put<Patient>(`${this.api}/update_by_id/${id}`, patient).pipe(
 
       tap((updated) => {
         this.patients.update(list =>

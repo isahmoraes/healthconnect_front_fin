@@ -97,7 +97,7 @@ export class AppointmentService {
     status: Appointment['status']
   ): Observable<Appointment | null> {
 
-    return this.http.patch<Appointment>(
+    return this.http.put<Appointment>(
       `${this.api}/update_by_id/${id}`,
       { status }
     ).pipe(
