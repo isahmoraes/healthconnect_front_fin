@@ -64,43 +64,23 @@ export class DoctorService {
 
   }
 
-  create(doctor: Partial<Doctor>): Observable<Doctor> {
+ create(doctor: Partial<Doctor>): Observable<Doctor> {
+  const payload = {
+    name: doctor.name || '',
+    specialty_id: doctor.specialtyId ?? 0,
+  };
 
-    const newDoctor: Doctor = {
+  return this.http.post<Doctor>(`${this.api}/create`, payload).pipe(
+    tap((created) => {
+      this.doctors.update(list => [...list, created]);
+    }),
+    catchError((error) => {
+      console.error('Erro ao criar médico:', error.error);
 
-      id: Date.now(),
-
-      name: doctor.name || '',
-
-      crm: doctor.crm || '',
-
-      specialtyId: doctor.specialtyId ?? 0,
-
-      email: doctor.email || '',
-
-      phone: doctor.phone || ''
-
-    };
-
-    return this.http.post<Doctor>(`${this.api}/create`, doctor).pipe(
-
-      tap((created) => {
-
-        this.doctors.update(list => [...list, created]);
-
-      }),
-
-      catchError(() => {
-
-        this.doctors.update(list => [...list, newDoctor]);
-
-        return of(newDoctor);
-
-      })
-
-    );
-
-  }
+      throw error;
+    })
+  );
+}
 
   update(id: number, doctor: Partial<Doctor>): Observable<Doctor> {
 
